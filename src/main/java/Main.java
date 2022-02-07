@@ -1,23 +1,27 @@
-import java.io.File;
+import java.io.*;
+import java.util.Scanner;
+import java.util.concurrent.ForkJoinPool;
+import java.util.zip.InflaterInputStream;
 
 public class Main {
 
+    //"C:/Users/Эндрю/Desktop/SPBMetro"
     public static void main(String[] args) {
-     String folderPath = "C:/Users/Эндрю/Desktop/SPBMetro";
-     File file = new File(folderPath);
-        System.out.println(getFolderSize(file));
-    }
 
-    public static long getFolderSize(File folder){
+        Scanner console = new Scanner(System.in);
+        System.out.println("Введите путь до папки:");
+        try {
 
-        if(folder.isFile()){
-            return folder.length();
+            String folderPath = console.nextLine();
+            File file = new File(folderPath);
+
+            FolderSizeCalculator calculator = new FolderSizeCalculator(file);
+            ForkJoinPool pool = new ForkJoinPool();
+            long size = pool.invoke(calculator);
+            System.out.println("Размер папки " + folderPath + " составляет " + FolderSizeCalculator.getHumanReadableSize(size));
+        } catch (Exception ex) {
+            System.out.println("Введенный путь неверный");
         }
-        long sum = 0;
-        File [] files = folder.listFiles();
-        for (File file : files){
-            sum += getFolderSize(file);
-        }
-        return sum;
     }
 }
+
